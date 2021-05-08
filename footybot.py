@@ -1,5 +1,7 @@
 import os
 import discord
+import logging
+import sys
 from discord.utils import find
 from dotenv import load_dotenv
 
@@ -11,6 +13,28 @@ API_TOKEN = os.getenv("API_TOKEN")
 API_ORG = os.getenv("API_ORG")
 
 client = discord.Client()
+
+# LOGGING FORMAT
+logger = logging.getLogger()
+LEVELS = {
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warning': logging.WARNING,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL
+}
+default_level = LEVELS['debug']
+log_message = '%(asctime)s:%(levelname)s FileName:%(filename)s LineNo:%(lineno)d  Message:%(message)s'
+if not len(logger.handlers):
+    logger.setLevel(default_level)
+
+    # create formatter
+    formatter = logging.Formatter(log_message)
+    # create console handler and set level to debug
+    stream = logging.StreamHandler(sys.stdout)
+    stream.setLevel(default_level)
+    stream.setFormatter(logging.Formatter(log_message))
+    logger.addHandler(stream)
 
 @client.event
 async def on_ready():
