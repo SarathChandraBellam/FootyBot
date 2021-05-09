@@ -30,6 +30,18 @@ def get_data_from_api(url_suffix: str):
     return json_data
 
 
+def create_file(data, file_name):
+    """
+    Method to create a json file
+    @param data: json data
+    @param file_name: name of the json file
+    @return: None, Creates a json in ./data folder
+    """
+    file_path = os.path.join(DATA_PATH, f"{file_name}.json")
+    with open(file_path, "w") as json_file:
+        json.dump(data, json_file)
+
+
 class ApiUtil:
     """
 
