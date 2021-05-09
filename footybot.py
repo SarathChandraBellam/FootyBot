@@ -11,7 +11,7 @@ from src.util import FOOTY_BOT_TOKEN
 
 # initializing the Bot class (Sub class of Discord Client  
 bot = commands.Bot(command_prefix='$')
-bot.remove_command('help')
+bot.remove_command('help!')
 
 # LOGGING FORMAT
 logger = logging.getLogger()
