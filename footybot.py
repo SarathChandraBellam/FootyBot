@@ -1,33 +1,31 @@
+"""
+Footybot
+"""
 import os
 import discord
 import logging
 import sys
 from discord.utils import find
-from dotenv import load_dotenv
+from discord.ext import commands
+from src.util import FOOTY_BOT_TOKEN
 
-
-load_dotenv()
-
-FOOTY_BOT_TOKEN = os.getenv("FOOTY_BOT_TOKEN")
-API_TOKEN = os.getenv("API_TOKEN")
-API_ORG = os.getenv("API_ORG")
-
-client = discord.Client()
+# initializing the Bot class (Sub class of Discord Client  
+bot = commands.Bot(command_prefix='$')
+bot.remove_command('help')
 
 # LOGGING FORMAT
 logger = logging.getLogger()
 LEVELS = {
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warning': logging.WARNING,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL
 }
-default_level = LEVELS['debug']
+default_level = LEVELS['info']
 log_message = '%(asctime)s:%(levelname)s FileName:%(filename)s LineNo:%(lineno)d  Message:%(message)s'
 if not len(logger.handlers):
     logger.setLevel(default_level)
-
     # create formatter
     formatter = logging.Formatter(log_message)
     # create console handler and set level to debug
@@ -36,35 +34,63 @@ if not len(logger.handlers):
     stream.setFormatter(logging.Formatter(log_message))
     logger.addHandler(stream)
 
-@client.event
+
+@bot.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord')
+    """
+    Changing the presence of the client
+    """
+    print(f'{bot.user} has connected to Discord')
+    await bot.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.listening,
+            name=".help on " + str(len(bot.guilds)) + " server(s)")
+    )
 
 
-@client.event
+@bot.event
 async def on_guild_join(guild):
     """
     Asynchronous method to send a message from bot whenever it join a new guild/server
     :param guild: Guild Instance
     :return: None, Sends a message to the general channel
     """
-    general = find(lambda x: x.name == 'general',  guild.text_channels)
-    if general and general.permissions_for(guild.me).send_messages:
-        await general.send('Hello {}!'.format(guild.name))
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            help_embed = footy_commands.getHelpEmbed()
+            await channel.send('Hey There! I am Footybot. I Just got added to this channel!\
+                \nBasic commands are listed below :)', embed=help_embed)
+            break
 
 
-@client.event
+@bot.event
 async def on_member_join(member):
-    await member.create_dm()
-    await member.dm_channel.send(f"Hi {member.name}, Welcome to Discord Server")
+    await member.send(f"Hi , welcome to the Server")
 
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
     response = message.content.lower()
     if response.startswith("hi"):
         await message.channel.send(f"Hi {message.author}, Love You 3000")
 
-client.run(FOOTY_BOT_TOKEN)
+
+@bot.command(name='99', help='Responds with a random quote from Brooklyn 99')
+async def nine_nine(ctx):
+    brooklyn_99_quotes = [
+        'I\'m the human form of the 💯 emoji.',
+        'Bingpot!',
+        'Cool. Cool cool cool cool cool cool cool,\
+        \nno doubt no doubt no doubt no doubt.',
+        'If I die, turn my tweets into a book',
+        'Captain Wuntch. Good to see you. But if you’re here, who’s guarding Hades?',
+        'Anyone over the age of six celebrating a birthday should go to hell.'
+    ]
+
+    response = random.choice(brooklyn_99_quotes)
+    await ctx.send(response)
+
+
+bot.run(FOOTY_BOT_TOKEN)
