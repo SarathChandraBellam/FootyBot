@@ -13,7 +13,7 @@ from src import footy_commands
 
 # initializing the Bot class (Sub class of Discord Client  
 bot = commands.Bot(command_prefix='$')
-bot.remove_command('help')
+bot.remove_command('help!')
 
 # LOGGING FORMAT
 logger = logging.getLogger()
