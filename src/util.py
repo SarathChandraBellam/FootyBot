@@ -23,7 +23,32 @@ HOME_DIR = os.path.dirname(os.path.dirname(__file__))
 DATA_PATH = os.path.join(HOME_DIR, "data")
 
 
-def get_embed(title, description, fields, color=0xf58300):
+def load_json(file):
+    """
+    load the json file
+    @param file:
+    @return: json file data
+    """
+    with open(file, "r") as comp_file:
+        data = json.load(comp_file)
+    return data
+
+
+def get_embed_from_file(file_name):
+    """
+    Read the title , desc and fields from json and embed it for discord
+    @param file_name: file name of the embed type ( Ex:  to embed help, file_name = "help_embed.json")
+    @return: embed data from the file
+    """
+    file_path = os.path.join(DATA_PATH, file_name)
+    data = load_json(file_path)
+    title = data["title"]
+    desc = data["desc"]
+    fields = data["fields"]
+    return prepare_embed(title, desc, fields)
+
+
+def prepare_embed(title, description, fields, color=0xf58300):
     """
     Method to embed the fields data
     @param title: Title of the Embed
@@ -50,10 +75,8 @@ def get_data_from_api(url_suffix: str):
                        (ref: https://www.football-data.org/)
     @return: Api response data
     """
-    print(url_suffix)
     url = f"{API_ORG}{url_suffix}"
     response = requests.get(url,headers=HEADERS)
-    print(response)
     json_data = response.json()
     return json_data
 
@@ -70,15 +93,6 @@ def create_file(data, file_name):
         json.dump(data, json_file)
 
 
-class ApiUtil:
-    """
-
-    """
-    def __init__(self):
-        """
-
-        """
-        self.base_url = API_ORG
 
 
 

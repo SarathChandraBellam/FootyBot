@@ -22,7 +22,7 @@ def create_competitions_json():
                               "area_code": each["area"]["countryCode"], "competition": each["name"],
                               "ensignUrl": each["area"]["ensignUrl"]}
             res.append(league_details)
-    # create_file(res, "competitions")
+    create_file(res, "competitions")
 
 
 def create_teams_json():
@@ -35,19 +35,58 @@ def create_teams_json():
     res = []
     for each_comp in competitions:
         id = each_comp["id"]
+        print(each_comp["competition"])
         suffix = f"competitions/{id}/teams"
         data = get_data_from_api(suffix)
+        print(data)
         if not "errorCode" in data:
-
             teams = data["teams"]
-            print(teams)
             params = ["id", "name", "shortName", "crestUrl", "tla", "website"]
             for team in teams:
-                team_data = {param:team[param] for param in params}
+                print(team["name"], team["tla"])
+                team_data = {param: team[param] for param in params}
+                team_data["competition_name"] = data["competition"]["name"]
+                team_data["competition_code"] = data["competition"]["code"]
+                team_data["area"] = data["competition"]["area"]["name"]
                 res.append(team_data)
     create_file(res, "teams")
 
 
+def generate_league_team_codes():
+    with open(os.path.join(DATA_PATH, "teams.json"), "r") as json_read:
+        competitions = json.load(json_read)
 
-create_competitions_json()
+    leagues = ["Premier League", "UEFA Champions League", "Ligue 1", "Bundesliga", "Serie A", "Primera Division"]
+    res = {}
+    for league in leagues:
+        temp = {}
+        x = [y for y in competitions if y["competition_name"] == league]
+        for each in x:
+            temp[each["shortName"]] = each["tla"]
+        res[league] = temp
+    print(res)
+
+
+def generate_countries_team_codes():
+    with open(os.path.join(DATA_PATH, "teams.json"), "r") as json_read:
+        competitions = json.load(json_read)
+
+    countries = ["England", "Spain", "Italy", "Germany", "France", "Europe"]
+    res = {}
+    for area in countries:
+        temp = {}
+        x = [y for y in competitions if y["area"] == area]
+        for each in x:
+            temp[each["shortName"]] = each["tla"]
+        res[area] = temp
+    print(res)
+
+
+# create_competitions_json()
 # create_teams_json()
+
+generate_league_team_codes()
+
+
+
+
