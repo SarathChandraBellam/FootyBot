@@ -1,0 +1,11 @@
+{
+  "title": "Competitions Codes",
+  "desc": "Refer codes for LaLiga, Premier League, Serie A, Bundesliga, Ligue 1, UCL & UEL",
+  "fields": [
+    {"name": ":one: Premier League", "value": "PL", "binary_format": "\n\u200b" },
+    {"name": ":two: LaLiga", "value": "SPA", "binary_format": "\n\u200b" },
+    {"name": ":three: Serie A", "value": "SA", "binary_format": "\n\u200b" },
+    {"name": ":four: Bundesliga", "value": "BL", "binary_format": "\n\u200b" },
+    {"name": ":five: Ligue 1", "value": "FL1" }
+  ]
+}
