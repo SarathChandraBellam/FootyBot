@@ -1,13 +1,15 @@
 """
 Footybot
 """
-import os
-import discord
-import logging
+# Generic Import
 import sys
-from discord.utils import find
+import logging
+import random
+# library import
+import discord
 from discord.ext import commands
 from src.util import FOOTY_BOT_TOKEN
+from src import footy_commands
 
 # initializing the Bot class (Sub class of Discord Client  
 bot = commands.Bot(command_prefix='$')
@@ -68,29 +70,43 @@ async def on_member_join(member):
     await member.send(f"Hi , welcome to the Server")
 
 
+@bot.command(name='cc', help="Respond with competitions code")
+async def competitions_codes(message):
+    comp_code_embed = footy_commands.get_competitions_codes()
+    comp_code_embed.set_footer(text='Requested By: ' + str(message.author))
+    await message.send(embed=comp_code_embed)
+
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     response = message.content.lower()
-    if response.startswith("hi"):
-        await message.channel.send(f"Hi {message.author}, Love You 3000")
+    if response.startswith(("hi", "hello", "foot", "bot", "Em")):
+        await message.channel.send(f"Hi {message.author}")
+    elif response.startswith("good"):
+        day_quotes = ["Wishing you a great day..",
+                      "May you be loved more and more today..",
+                      "Enjoy the great day you are blessed with",
+                      "Have a great day! This is my wish for you today",
+                      "New day comes with new hopes and new opportunities"]
+        resp = random.choice(day_quotes)
+        await message.channel.send(resp)
+    elif response.startswith("love"):
+        love_quotes = ["Love is the most beautiful thing in this world, \
+                      it cannot be seen or even heard but must be felt with the heart.",
+                       "Life without love is like a tree without blossoms or fruit",
+                       "Love recognizes no barriers. It jumps hurdles, leaps fences, \
+                      penetrates walls to arrive at its destination full of hope.",
+                      ]
 
+        resp = random.choice(love_quotes)
+        await message.channel.send(resp)
+    # on_message() and @bot.command issue doesn't work together unless you add the below command
+    # Overriding the default provided on_message forbids any extra commands from running.
+    # To fix this, add a bot.process_commands(message) line at the end of your on_message.
+    await bot.process_commands(message)
 
-@bot.command(name='99', help='Responds with a random quote from Brooklyn 99')
-async def nine_nine(ctx):
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        'Cool. Cool cool cool cool cool cool cool,\
-        \nno doubt no doubt no doubt no doubt.',
-        'If I die, turn my tweets into a book',
-        'Captain Wuntch. Good to see you. But if you’re here, who’s guarding Hades?',
-        'Anyone over the age of six celebrating a birthday should go to hell.'
-    ]
-
-    response = random.choice(brooklyn_99_quotes)
-    await ctx.send(response)
 
 
 bot.run(FOOTY_BOT_TOKEN)
