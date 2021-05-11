@@ -70,6 +70,13 @@ async def on_member_join(member):
     await member.send(f"Hi , welcome to the Server")
 
 
+@bot.command(name='cc', help="Respond with competitions code")
+async def competitions_codes(message):
+    comp_code_embed = footy_commands.get_competitions_codes()
+    comp_code_embed.set_footer(text='Requested By: ' + str(message.author))
+    await message.send(embed=comp_code_embed)
+
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -100,12 +107,6 @@ async def on_message(message):
     # To fix this, add a bot.process_commands(message) line at the end of your on_message.
     await bot.process_commands(message)
 
-
-@bot.command(name='cc', help="Respond with competitions code")
-async def competitions_codes(message):
-    comp_code_embed = footy_commands.get_competitions_codes()
-    comp_code_embed.set_footer(text='Requested By: ' + str(message.author))
-    await message.send(embed=comp_code_embed)
 
 
 bot.run(FOOTY_BOT_TOKEN)
