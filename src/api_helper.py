@@ -3,11 +3,7 @@ Module to use util and create json of API data
 """
 import json
 import os
-from util import get_data_from_api, create_file
-
-
-HOME_DIR = os.path.dirname(os.path.dirname(__file__))
-DATA_PATH = os.path.join(HOME_DIR, "data")
+from util import get_data_from_api, create_file, DATA_PATH
 
 
 def create_competitions_json():
@@ -16,15 +12,17 @@ def create_competitions_json():
     @return: None
     """
     data = get_data_from_api("competitions")
+    print(data)
     countries = ["England", "Spain", "Germany", "France", "Italy", "Portugal", "Europe", "World"]
     res = []
     for each in data["competitions"]:
         if each["area"]["name"] in countries:
+            print(each)
             league_details = {"id": each["id"], "area": each["area"]["name"], "area_id": each["area"]["id"],
                               "area_code": each["area"]["countryCode"], "competition": each["name"],
                               "ensignUrl": each["area"]["ensignUrl"]}
             res.append(league_details)
-    create_file(res, "competitions")
+    # create_file(res, "competitions")
 
 
 def create_teams_json():
@@ -51,5 +49,5 @@ def create_teams_json():
 
 
 
-# create_competitions_json()
+create_competitions_json()
 # create_teams_json()
