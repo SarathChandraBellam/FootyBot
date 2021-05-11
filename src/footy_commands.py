@@ -16,7 +16,7 @@ def get_team_codes(league_code):
     @param league_code: league code ( ex: premier league : PL)
     @return: Embed with teams and their codes
     """
-    embed = discord.Embed()
+
     try:
         if league_code is None:
             title = "Codes of Top Clubs"
@@ -33,9 +33,11 @@ def get_team_codes(league_code):
                 raise InvalidLeagueCodeException(f"League code {league_code} is invalid")
             title = f" Team codes of League - {league_code}"
             description = "League specific team codes"
-            fields = [{"name": name, "value": value, "binary_format": "\n\u200b"} for name, value in league_teams.items()]
+            fields = [{"name": name, "value": value, "binary_format": "\n\u200b"} for name, value
+                      in league_teams.items() if value is not None]
         embed = prepare_embed(title, description, fields)
     except InvalidLeagueCodeException as exp:
+        embed = discord.Embed(title=f" Team codes of League - {league_code}", description=exp)
         print(exp)
     return embed
 
