@@ -3,8 +3,9 @@
 import os
 import discord
 from src.util import load_json, DATA_PATH, prepare_embed
-from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES
+from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES,LEAGUE_CODES
 from src.exception import InvalidLeagueCodeException
+from src.api import get_standings
 
 TEAMS = load_json(os.path.join(DATA_PATH, "teams.json"))
 COMPETITIONS = load_json(os.path.join(DATA_PATH, "competitions.json"))
@@ -41,6 +42,24 @@ def get_team_codes(league_code):
         print(exp)
     return embed
 
+
+def get_league_standings(league_code):
+    """
+    Prepare embed of league specific table and standings
+    @param league_code: league code ( ex: premier league : PL)
+    @return: Embed with teams and table
+    """
+    try:
+        if league_code is None:
+            raise InvalidLeagueCodeException(f"No league code provided!")
+        league_id = LEAGUE_CODES.get(league_code,None)
+        if league_id is None:
+            raise InvalidLeagueCodeException(f"League code {league_code} is invalid")
+        
+    except InvalidLeagueCodeException as exp:
+        embed = discord.Embed(title=f"{league_code} - Standings and points table", description=exp)
+
+    return embed
 
 
 

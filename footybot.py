@@ -9,7 +9,7 @@ import random
 import discord
 from discord.ext import commands
 from src.util import FOOTY_BOT_TOKEN, get_embed_from_file
-from src.footy_commands import get_team_codes
+from src.footy_commands import get_team_codes,get_league_standings
 
 # initializing the Bot class (Sub class of Discord Client  
 bot = commands.Bot(command_prefix='-')
@@ -90,6 +90,12 @@ async def team_codes(message, league_code=None ):
     team_code_embed = get_team_codes(league_code)
     team_code_embed.set_footer(text='Requested By: ' + str(message.author))
     await message.send(embed=team_code_embed)
+
+@bot.command(name='standings', help="League table and standings", alias=["s"])
+async def standings(message, league_code=None ):
+    standings_embed =  get_league_standings(league_code)
+    standings_embed.set_footer(text='Requested By: ' + str(message.author))
+    await message.send(embed=standings_embed)
 
 
 @bot.event
