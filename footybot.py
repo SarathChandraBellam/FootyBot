@@ -12,7 +12,7 @@ from src.util import FOOTY_BOT_TOKEN, get_embed_from_file
 from src.footy_commands import get_team_codes
 
 # initializing the Bot class (Sub class of Discord Client  
-bot = commands.Bot(command_prefix='.')
+bot = commands.Bot(command_prefix='-')
 bot.remove_command('help!')
 bot.remove_command('help')
 

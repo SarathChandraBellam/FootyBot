@@ -1,8 +1,8 @@
 {
-  "title": "Footybot Help !",
-  "desc": "Displays all available commands. Command prefix is '.'",
-  "fields": [
-    {"name": ":one: .cc", "value": "Displays competitions and their Respective Codes", "binary_format": "\n\u200b" },
-    {"name": ":two: .tc", "value": "Displays teams and their their Respective Codes", "binary_format": "\n\u200b" }
-  ]
+    "title": "Footybot Help !",
+    "desc": "Displays all available commands. Command prefix is '-'",
+    "fields": [
+        { "name": ":one: -cc", "value": "Displays competitions and their Respective Codes", "binary_format": "\n\u200b" },
+        { "name": ":two: -tc", "value": "Displays teams and their their Respective Codes", "binary_format": "\n\u200b" }
+    ]
 }
