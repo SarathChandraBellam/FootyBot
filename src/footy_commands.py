@@ -3,9 +3,9 @@
 import os
 import discord
 from src.util import load_json, DATA_PATH, prepare_embed, format_data_into_table
-from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES,LEAGUE_CODES
+from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES, LEAGUE_CODES, TEAM_LONG_NAME_CODES
 from src.exception import InvalidLeagueCodeException
-from src.api import get_standings
+from src.api import get_standings, get_fixtures
 
 TEAMS = load_json(os.path.join(DATA_PATH, "teams.json"))
 COMPETITIONS = load_json(os.path.join(DATA_PATH, "competitions.json"))
@@ -59,6 +59,31 @@ def get_league_standings(league_code):
     except InvalidLeagueCodeException as exp:
         print(exp)
         return None
+
+
+def get_matches(code):
+    """
+    Prepare embed of league specific table and standings
+    @param code: league code ( ex: premier league : PL)
+    @return: Embed with team or league fixtures
+    """
+    try:
+        if code is None:
+            raise InvalidLeagueCodeException("Code is Invalid. Give proper League code or Team code")
+        if code.upper() in TEAM_LONG_NAME_CODES.values():
+            code_type = "TEAM"
+            team = [team_de["id"] for team_de in TEAMS if code.upper() == team_de["name"].upper()]
+            code_id = team[0] if len(team) >=1 else None
+        elif code.upper() in LEAGUE_CODES:
+            code_type = "LEAGUE"
+            code_id = LEAGUE_CODES.get(code, None)
+        else:
+            raise InvalidLeagueCodeException(f"League code {code} is invalid")
+        fixtures = get_fixtures(code_id, code_type)
+    except InvalidLeagueCodeException as exp:
+        print(exp)
+
+
 
 
 

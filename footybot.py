@@ -9,7 +9,7 @@ import random
 import discord
 from discord.ext import commands
 from src.util import FOOTY_BOT_TOKEN, get_embed_from_file
-from src.footy_commands import get_team_codes,get_league_standings
+from src.footy_commands import get_team_codes, get_league_standings, get_matches
 
 # initializing the Bot class (Sub class of Discord Client  
 bot = commands.Bot(command_prefix='-')
@@ -99,12 +99,25 @@ async def standings(message, league_code=None ):
         if league_stands is not None:
             await message.send(league_stands)
         else:
-            await message.send(embed=discord.Embed(title=f" Team codes of League - {league_code}",
+            await message.send(embed=discord.Embed(title=f" Standing & Points table- {league_code}",
                                                    description=f"League code {league_code} is invalid"))
     else:
-        await message.send(embed=discord.Embed(ttitle=f" Team codes of League - {league_code}",
-                                                   description="No league code provided"))
+        await message.send(embed=discord.Embed(ttitle=f" Standing & Points table - {league_code}",
+                                               description="No league code provided"))
 
+
+@bot.command(name='matches', help="Team or league fixtures", alias=["fixtures"])
+async def matches(message, code=None):
+    if code is not None:
+        league_stands = get_matches(code)
+        if league_stands is not None:
+            await message.send(league_stands)
+        else:
+            await message.send(embed=discord.Embed(title=f" Team or League fixtures - {code}",
+                                                   description=f"League code {code} is invalid"))
+    else:
+        await message.send(embed=discord.Embed(ttitle=f" Team or League fixtures - {code}",
+                                               description="No league code provided"))
 
 
 @bot.event

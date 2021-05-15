@@ -49,7 +49,7 @@ def get_embed_from_file(file_name):
     return prepare_embed(title, desc, fields)
 
 
-def prepare_embed(title, description, fields, color=0xf58300):
+def prepare_embed(title, description, fields, color= 0x3498db):
     """
     Method to embed the fields data
     @param title: Title of the Embed
