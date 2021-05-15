@@ -7,6 +7,7 @@ import requests
 import discord
 import json
 from dotenv import load_dotenv
+from src.codes import TEAM_LONG_NAME_CODES
 
 # loading the environment variables
 load_dotenv()
@@ -91,6 +92,31 @@ def create_file(data, file_name):
     file_path = os.path.join(DATA_PATH, f"{file_name}.json")
     with open(file_path, "w") as json_file:
         json.dump(data, json_file)
+
+
+def format_data_into_table(resp):
+    """
+
+    @param resp:
+    @return:
+    """
+    standings_format = '```\nLEAGUE: ' + str(resp['competition']['name']) + \
+             ' ' * (45 - 2 - 8 - 10 - len(str(resp['competition']['name']))) + \
+             'MATCHDAY: ' + str(resp['season']['currentMatchday']) + '\n'
+    standings_format += '╔════╤══════╤════╤════╤════╤════╤═════╤═════╗\n'
+    standings_format += '║ SN │ TEAM │ M  │ W  │ D  │ L  │ PTS │ GD  ║\n'
+    standings_format += '╠════╪══════╪════╪════╪════╪════╪═════╪═════╣\n'
+    for team in resp['standings'][0]['table']:
+        text = '║ %-2d │ %-4s │ %-2d │ %-2d │ %-2d │ %-2d │ %-3d │ %+-3d ║\n' \
+               % (team['position'], TEAM_LONG_NAME_CODES.get(team['team']['name'], team['team']['name'][:4])[:4], team['playedGames'],
+                  team['won'],
+                  team['draw'], team['lost'], team['points'], team['goalDifference'])
+        standings_format += text
+
+
+    standings_format += '╚════╧══════╧════╧════╧════╧════╧═════╧═════╝```'
+    return standings_format
+
 
 
 

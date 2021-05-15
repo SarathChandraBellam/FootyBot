@@ -3,7 +3,7 @@ Module to use util and create json of API data
 """
 import json
 import os
-from util import get_data_from_api, create_file, DATA_PATH
+from util import get_data_from_api, create_file, DATA_PATH, load_json
 
 
 def create_competitions_json():
@@ -81,11 +81,21 @@ def generate_countries_team_codes():
         res[area] = temp
     print(res)
 
+#
+# # create_competitions_json()
+# # create_teams_json()
+# data = load_json(os.path.join(DATA_PATH, "teams.json"))
+# res = []
+# check = []
+# team_map = {}
+# for each in data:
+#     if not each["name"] in check:
+#         res.append(each)
+#         team_map[each["name"]] = each["tla"]
+#         check.append(each["name"])
+# print(team_map)
 
-# create_competitions_json()
-# create_teams_json()
 
-generate_league_team_codes()
 
 
 

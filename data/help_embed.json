@@ -3,6 +3,7 @@
     "desc": "Displays all available commands. Command prefix is '-'",
     "fields": [
         { "name": ":one: -cc", "value": "Displays competitions and their Respective Codes", "binary_format": "\n\u200b" },
-        { "name": ":two: -tc", "value": "Displays teams and their their Respective Codes", "binary_format": "\n\u200b" }
+        { "name": ":two: -tc", "value": "Displays teams and their their Respective Codes", "binary_format": "\n\u200b" },
+         { "name": ":two: -standings <league_code>", "value": "Dispays League standings & points table ex: -standings pl", "binary_format": "\n\u200b" }
     ]
 }

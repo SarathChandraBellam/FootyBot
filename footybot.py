@@ -91,11 +91,20 @@ async def team_codes(message, league_code=None ):
     team_code_embed.set_footer(text='Requested By: ' + str(message.author))
     await message.send(embed=team_code_embed)
 
+
 @bot.command(name='standings', help="League table and standings", alias=["s"])
 async def standings(message, league_code=None ):
-    standings_embed =  get_league_standings(league_code)
-    standings_embed.set_footer(text='Requested By: ' + str(message.author))
-    await message.send(embed=standings_embed)
+    if league_code is not None:
+        league_stands = get_league_standings(league_code)
+        if league_stands is not None:
+            await message.send(league_stands)
+        else:
+            await message.send(embed=discord.Embed(title=f" Team codes of League - {league_code}",
+                                                   description=f"League code {league_code} is invalid"))
+    else:
+        await message.send(embed=discord.Embed(ttitle=f" Team codes of League - {league_code}",
+                                                   description="No league code provided"))
+
 
 
 @bot.event
@@ -103,7 +112,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
     response = message.content.lower()
-    if response.startswith(("hi", "hello", "foot", "bot", "em")):
+    if response.startswith(("foot", "bot")):
         await message.channel.send(f"Hi {message.author}", embed=get_embed_from_file("help_embed.json"))
     elif response.startswith("good"):
         day_quotes = ["Wishing you a great day..",
@@ -127,7 +136,6 @@ async def on_message(message):
     # Overriding the default provided on_message forbids any extra commands from running.
     # To fix this, add a bot.process_commands(message) line at the end of your on_message.
     await bot.process_commands(message)
-
 
 
 bot.run(FOOTY_BOT_TOKEN)

@@ -2,7 +2,7 @@
 """
 import os
 import discord
-from src.util import load_json, DATA_PATH, prepare_embed
+from src.util import load_json, DATA_PATH, prepare_embed, format_data_into_table
 from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES,LEAGUE_CODES
 from src.exception import InvalidLeagueCodeException
 from src.api import get_standings
@@ -50,16 +50,16 @@ def get_league_standings(league_code):
     @return: Embed with teams and table
     """
     try:
-        if league_code is None:
-            raise InvalidLeagueCodeException(f"No league code provided!")
-        league_id = LEAGUE_CODES.get(league_code,None)
+        league_id = LEAGUE_CODES.get(league_code.upper(),None)
         if league_id is None:
             raise InvalidLeagueCodeException(f"League code {league_code} is invalid")
-        
+        standings_data = get_standings(league_id)
+        str_out = format_data_into_table(standings_data)
+        return str_out
     except InvalidLeagueCodeException as exp:
-        embed = discord.Embed(title=f"{league_code} - Standings and points table", description=exp)
+        print(exp)
+        return None
 
-    return embed
 
 
 
