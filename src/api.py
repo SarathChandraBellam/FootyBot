@@ -23,7 +23,7 @@ def get_fixtures(code_id, code_type="LEAGUE"):
         fixtures = get_data_from_api(team_suffix)
     return fixtures
 
-print(get_fixtures(2021, code_type="LEAGUE"))
+# print(get_fixtures(2021, code_type="LEAGUE"))
 
 
 
