@@ -8,12 +8,13 @@ import random
 # library import
 import discord
 from discord.ext import commands
-from src.util import FOOTY_BOT_TOKEN
-from src import footy_commands
+from src.util import FOOTY_BOT_TOKEN, get_embed_from_file
+from src.footy_commands import get_team_codes, get_league_standings, get_matches
 
 # initializing the Bot class (Sub class of Discord Client  
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='-')
 bot.remove_command('help!')
+bot.remove_command('help')
 
 # LOGGING FORMAT
 logger = logging.getLogger()
@@ -59,9 +60,8 @@ async def on_guild_join(guild):
     """
     for channel in guild.text_channels:
         if channel.permissions_for(guild.me).send_messages:
-            help_embed = footy_commands.getHelpEmbed()
-            await channel.send('Hey There! I am Footybot. I Just got added to this channel!\
-                \nBasic commands are listed below :)', embed=help_embed)
+            help_embed = get_embed_from_file("help_embed.json")
+            await channel.send('Hey There! I am Footybot. I Just got added to this channel!', embed=help_embed)
             break
 
 
@@ -70,11 +70,54 @@ async def on_member_join(member):
     await member.send(f"Hi , welcome to the Server")
 
 
-@bot.command(name='cc', help="Respond with competitions code")
+@bot.command(name='cc', help="Respond with competitions code", alias=["lc", "league_codes", "competition_codes"])
 async def competitions_codes(message):
-    comp_code_embed = footy_commands.get_competitions_codes()
+    comp_code_embed = get_embed_from_file('competitions_embed.json')
     comp_code_embed.set_footer(text='Requested By: ' + str(message.author))
     await message.send(embed=comp_code_embed)
+
+
+@bot.command(name='help', help="Respond with all available commands", alias=["h", "help!"])
+async def help(message):
+    comp_code_embed = get_embed_from_file('help_embed.json')
+    comp_code_embed.set_footer(text='Requested By: ' + str(message.author))
+    await message.send(embed=comp_code_embed)
+
+
+@bot.command(name='tc', help="Respond with league wise team codes", alias=["team_codes"])
+async def team_codes(message, league_code=None ):
+    print(league_code)
+    team_code_embed = get_team_codes(league_code)
+    team_code_embed.set_footer(text='Requested By: ' + str(message.author))
+    await message.send(embed=team_code_embed)
+
+
+@bot.command(name='standings', help="League table and standings", alias=["s"])
+async def standings(message, league_code=None ):
+    if league_code is not None:
+        league_stands = get_league_standings(league_code)
+        if league_stands is not None:
+            await message.send(league_stands)
+        else:
+            await message.send(embed=discord.Embed(title=f" Standing & Points table- {league_code}",
+                                                   description=f"League code {league_code} is invalid"))
+    else:
+        await message.send(embed=discord.Embed(ttitle=f" Standing & Points table - {league_code}",
+                                               description="No league code provided"))
+
+
+@bot.command(name='matches', help="Team or league fixtures", alias=["fixtures"])
+async def matches(message, code=None):
+    if code is not None:
+        league_stands = get_matches(code)
+        if league_stands is not None:
+            await message.send(league_stands)
+        else:
+            await message.send(embed=discord.Embed(title=f" Team or League fixtures - {code}",
+                                                   description=f"League code {code} is invalid"))
+    else:
+        await message.send(embed=discord.Embed(ttitle=f" Team or League fixtures - {code}",
+                                               description="No league code provided"))
 
 
 @bot.event
@@ -82,8 +125,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     response = message.content.lower()
-    if response.startswith(("hi", "hello", "foot", "bot", "Em")):
-        await message.channel.send(f"Hi {message.author}")
+    if response.startswith(("foot", "bot")):
+        await message.channel.send(f"Hi {message.author}", embed=get_embed_from_file("help_embed.json"))
     elif response.startswith("good"):
         day_quotes = ["Wishing you a great day..",
                       "May you be loved more and more today..",
@@ -106,7 +149,6 @@ async def on_message(message):
     # Overriding the default provided on_message forbids any extra commands from running.
     # To fix this, add a bot.process_commands(message) line at the end of your on_message.
     await bot.process_commands(message)
-
 
 
 bot.run(FOOTY_BOT_TOKEN)

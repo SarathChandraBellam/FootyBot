@@ -1,0 +1,7 @@
+"""
+
+"""
+
+
+class InvalidLeagueCodeException(Exception):
+    pass
