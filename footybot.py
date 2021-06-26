@@ -109,12 +109,12 @@ async def standings(message, league_code=None ):
 @bot.command(name='matches', help="Team or league fixtures", alias=["fixtures"])
 async def matches(message, code=None):
     if code is not None:
-        league_stands = get_matches(code)
-        if league_stands is not None:
-            await message.send(league_stands)
+        current_matches = get_matches(code)
+        if current_matches is not None:
+            await message.send(current_matches)
         else:
             await message.send(embed=discord.Embed(title=f" Team or League fixtures - {code}",
-                                                   description=f"League code {code} is invalid"))
+                                                   description=f"League code {code} is invalid!!!"))
     else:
         await message.send(embed=discord.Embed(ttitle=f" Team or League fixtures - {code}",
                                                description="No league code provided"))

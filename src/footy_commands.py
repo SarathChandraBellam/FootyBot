@@ -67,6 +67,7 @@ def get_matches(code):
     @param code: league code ( ex: premier league : PL)
     @return: Embed with team or league fixtures
     """
+    print(code)
     try:
         if code is None:
             raise InvalidLeagueCodeException("Code is Invalid. Give proper League code or Team code")
@@ -83,8 +84,7 @@ def get_matches(code):
     except InvalidLeagueCodeException as exp:
         print(exp)
 
-
-
+        return fixtures
 
 
 
