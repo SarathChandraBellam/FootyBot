@@ -5,7 +5,7 @@
         { "name": ":one: -cc", "value": "Displays competitions and their Respective Codes", "binary_format": "\n\u200b" },
         { "name": ":two: -tc", "value": "Displays teams and their their Respective Codes", "binary_format": "\n\u200b" },
         { "name": ":three: -standings <league_code>", "value": "Dispays League standings & points table ex: -standings pl", "binary_format": "\n\u200b" },
-        { "name": ":four: -matches <league_code>", "value": "Dispays League standings & points table ex: -standings pl", "binary_format": "\n\u200b" }
+        { "name": ":four: -league_fixtures <league_code>", "value": "Dispays League fixtures ex: -league_fixtures pl", "binary_format": "\n\u200b" }
 
     ]
 }
