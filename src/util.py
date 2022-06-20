@@ -6,6 +6,9 @@ import os
 import requests
 import discord
 import json
+from dateutil import tz
+from datetime import  datetime
+from datetime import timedelta
 from dotenv import load_dotenv
 from src.codes import TEAM_LONG_NAME_CODES
 
@@ -80,6 +83,17 @@ def get_data_from_api(url_suffix: str):
     response = requests.get(url,headers=HEADERS)
     json_data = response.json()
     return json_data
+
+
+def utc_to_ist(utc_str):
+    """
+
+    :param utc_str:
+    :return:
+    """
+    dt_utc = datetime.strptime(utc_str, "%Y-%m-%dT%H:%M:%SZ")
+    itc_time = dt_utc + timedelta(minutes=330)
+    return itc_time.strftime("%Y/%m/%d %H:%M")
 
 
 def create_file(data, file_name):

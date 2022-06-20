@@ -2,7 +2,7 @@
 """
 import os
 import discord
-from src.util import load_json, DATA_PATH, prepare_embed, format_data_into_table
+from src.util import load_json, DATA_PATH, prepare_embed, format_data_into_table, utc_to_ist
 from src.codes import LEAGUE_TEAM_CODES, TOP_TEAM_CODES, LEAGUE_CODES, TEAM_LONG_NAME_CODES
 from src.exception import InvalidLeagueCodeException
 from src.api import get_standings, get_fixtures
@@ -61,29 +61,54 @@ def get_league_standings(league_code):
         return None
 
 
-def get_matches(code):
+def format_league_fixtures(matches, match_day):
+    """
+
+    :param matches:
+    :param match_day:
+    :return:
+    """
+    res = []
+    current_match_day = int(matches[0]["season"]["currentMatchday"]) if match_day is None else int(match_day)
+    res_matches = [{"home": match["homeTeam"]["name"], "away": match["awayTeam"]["name"],
+                    "timestamp": utc_to_ist(match["utcDate"]), "result": match["score"]}
+                   for match in matches if match["matchday"] == current_match_day]
+    return res_matches, current_match_day
+
+
+def get_league_matches(code_, match_day):
     """
     Prepare embed of league specific table and standings
-    @param code: league code ( ex: premier league : PL)
+    @param code_: league code ( ex: premier league : PL)
     @return: Embed with team or league fixtures
     """
     try:
-        if code is None:
-            raise InvalidLeagueCodeException("Code is Invalid. Give proper League code or Team code")
-        if code.upper() in TEAM_LONG_NAME_CODES.values():
-            code_type = "TEAM"
-            team = [team_de["id"] for team_de in TEAMS if code.upper() == team_de["name"].upper()]
-            code_id = team[0] if len(team) >=1 else None
-        elif code.upper() in LEAGUE_CODES:
+        if code_ is None:
+            raise InvalidLeagueCodeException("Code is Invalid. Give proper League code ")
+        # if code_.upper() in TEAM_LONG_NAME_CODES.values():
+        #     code_type = "TEAM"
+        #     team = [team_de["id"] for team_de in TEAMS if team_de["tla"] is not None and code_.upper() == team_de["tla"].upper()]
+        #     code_id = team[0] if len(team) >=1 else None
+        #     print(code_id)
+        elif code_.upper() in LEAGUE_CODES:
             code_type = "LEAGUE"
-            code_id = LEAGUE_CODES.get(code, None)
+            code_id = LEAGUE_CODES.get(code_.upper())
         else:
-            raise InvalidLeagueCodeException(f"League code {code} is invalid")
-        fixtures = get_fixtures(code_id, code_type)
+            raise InvalidLeagueCodeException(f"League code {code_} is invalid")
+        fixtures = get_fixtures(code_id, code_type)["matches"]
+        format_league_fix, current_match_day = format_league_fixtures(fixtures, match_day)
+        title = f"{code_} - league fixtures/matches"
+        description = f"Match Day - {current_match_day}"
+        fields = []
+        for each_fix in format_league_fix:
+            fields.append({"name" : f"{each_fix['home']} vs {each_fix['away']}",
+                           "value": f"Kickoff: {each_fix['timestamp']}" })
+        fixtures_embed = prepare_embed(title, description, fields)
+        return fixtures_embed
     except InvalidLeagueCodeException as exp:
         print(exp)
-
-
+        return discord.Embed(title=f" League fixtures - {code_}",
+                                                   description=f"League code {code_} is invalid!!!")
 
 
 
